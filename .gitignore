@@ -1,0 +1,8 @@
+Debug/
+Release/
+*.obj
+*.exe
+*.pch
+*.user
+UpgradeLog.htm
+.vs/

@@ -1,0 +1,15 @@
+LIBRARY FeedMonitor
+
+EXPORTS
+    MtSrvAbout
+    MtSrvStartup
+    MtSrvCleanup
+
+    MtSrvPluginCfgSet
+    MtSrvPluginCfgNext
+    MtSrvPluginCfgTotal
+
+    MtSrvTradesUpdate
+    MtSrvTradesAddExt
+    MtSrvTradesCloseBy
+
