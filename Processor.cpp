@@ -1,5 +1,6 @@
 #include <process.h>
 #include <stdio.h>
+#include "HttpPost.h"
 #include "Loger.h"
 #include "Processor.h"
 #include "ServerApi.h"
@@ -28,7 +29,8 @@ void Processor::Initialize() {
     FUNC_WARDER;
 
     Config::Instance().GetInteger("Disable Plugin", &m_disable_plugin, "0");
-    Config::Instance().GetString("Server", m_notice_server, sizeof(m_notice_server), "");
+    Config::Instance().GetString("Server", m_notice_server, sizeof(m_notice_server), "http://localhost");
+    HttpPost::SetUrl(std::string(m_notice_server));
 }
 
 void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode) {
@@ -43,9 +45,38 @@ void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode)
     }
 
     if (m_disable_plugin) {
-        return ;
+        return;
     }
 
+    if (trade->cmd >= OP_BALANCE) {
+        return;
+    }
+
+    boost::property_tree::ptree notice;
+    notice.put("order", trade->order);
+    notice.put("user", user->login);
+    switch (mode) {
+        case UPDATE_NORMAL:
+            if (trade->cmd == OP_BUY || trade->cmd == OP_SELL) {
+                notice.put("mode", "update");
+            } else {
+                notice.put("mode", "p_update");
+            }
+            break;
+        case UPDATE_ACTIVATE:
+            notice.put("mode", "active");
+            break;
+        case UPDATE_CLOSE:
+            notice.put("mode", "close");
+            break;
+        case UPDATE_DELETE:
+            notice.put("mode", "p_delete");
+            break;
+        default:
+            notice.put("error", "Unknown");
+            break;
+    }
+    HttpPost::AddNotice(notice);
 }
 
 void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSymbol* symbol, const int mode) {
@@ -62,6 +93,40 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
     if (m_disable_plugin) {
         return;
     }
+
+    if (trade->cmd >= OP_BALANCE) {
+        return;
+    }
+
+    //, OP_BUY_LIMIT, OP_SELL_LIMIT, OP_BUY_STOP, OP_SELL_STOP
+
+    boost::property_tree::ptree notice;
+    notice.put("order", trade->order);
+    notice.put("user", user->login);
+    switch (mode) {
+        case OPEN_NEW:
+            if (trade->cmd == OP_BUY || trade->cmd == OP_SELL) {
+                notice.put("mode", "open");
+            } else {
+                notice.put("mode", "p_open");
+            }
+            break;
+        case OPEN_CLOSE:
+            notice.put("mode", "OPEN_CLOSE");
+            break;
+        case OPEN_RESTORE:
+            notice.put("mode", "OPEN_RESTORE");
+            break;
+        case OPEN_API:
+            notice.put("mode", "OPEN_API");
+            break;
+        case OPEN_ROLLOVER:
+            notice.put("mode", "OPEN_ROLLOVER");
+        default:
+            notice.put("error", "Unknown");
+            break;
+    }
+    HttpPost::AddNotice(notice);
 }
 
 void Processor::OrderClosedBy(TradeRecord* ftrade, TradeRecord* strade, TradeRecord* remaind, ConSymbol* sec, UserInfo* user) {

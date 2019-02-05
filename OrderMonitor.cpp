@@ -1,3 +1,4 @@
+#include "HttpPost.h"
 #include "Config.h"
 #include "Loger.h"
 #include "Processor.h"
@@ -48,10 +49,13 @@ int APIENTRY MtSrvStartup(CServerInterface* server) {
     //--- initialize dealer helper
     Processor::Instance().Initialize();
 
+    HttpPost::StartPost();
+
     return (TRUE);
 }
 
 void APIENTRY MtSrvCleanup() {
+    HttpPost::StartPost();
     Processor::Instance().Shutdown();
 }
 
@@ -73,17 +77,9 @@ int APIENTRY MtSrvPluginCfgTotal() {
 }
 
 void APIENTRY MtSrvTradesUpdate(TradeRecord* trade, UserInfo* user, const int mode) {
-    LOG("MtSrvTradesUpdate.");
     Processor::Instance().OrderUpdated(trade, user, mode);
 }
 
 void APIENTRY MtSrvTradesAddExt(TradeRecord* trade, const UserInfo* user, const ConSymbol* symbol, const int mode) {
-    LOG("MtSrvTradesAddExt.");
     Processor::Instance().OrderAdded(trade, user, symbol, mode);
-}
-
-void APIENTRY MtSrvTradesCloseBy(TradeRecord* ftrade, TradeRecord* strade, TradeRecord* remaind, ConSymbol* sec,
-                                 UserInfo* user) {
-    LOG("MtSrvTradesCloseBy.");
-    Processor::Instance().OrderClosedBy(ftrade, strade, remaind, sec, user);
 }

@@ -11,5 +11,5 @@ EXPORTS
 
     MtSrvTradesUpdate
     MtSrvTradesAddExt
-    MtSrvTradesCloseBy
+
 
