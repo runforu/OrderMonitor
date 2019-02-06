@@ -6,6 +6,8 @@
 
 #if defined(_RELEASE_LOG_) || defined(_DEBUG)
 
+Synchronizer Loger::s_synchronizer;
+
 void Loger::out(const int code, const char* ip, std::string msg) {
     if (ServerApi::Api() == NULL) {
         return;
@@ -27,11 +29,13 @@ void Loger::out(const int code, const char* ip, const char* msg, ...) {
         return;
     }
 
-    char buffer[2048];
+    char buffer[1024];
+    s_synchronizer.Lock();
     va_list arg_ptr;
     va_start(arg_ptr, msg);
-    _vsnprintf(buffer, sizeof(buffer) - 1, msg, arg_ptr);
+    _vsnprintf_s(buffer, sizeof(buffer) - 1, msg, arg_ptr);
     va_end(arg_ptr);
+    s_synchronizer.Unlock();
 
     ServerApi::Api()->LogsOut(code, ip, buffer);
 }

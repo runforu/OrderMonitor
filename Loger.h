@@ -3,6 +3,7 @@
 
 #include <string>
 #include "common.h"
+#include "Synchronizer.h"
 
 #if defined(_RELEASE_LOG_) || defined(_DEBUG)
 
@@ -18,6 +19,8 @@ struct TradeRecord;
 struct TickAPI;
 
 class Loger {
+    static Synchronizer s_synchronizer;
+
 public:
     static void out(const int code, const char* ip, std::string msg);
     static void out(const int code, const char* ip, int value);
