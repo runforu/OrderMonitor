@@ -20,7 +20,7 @@ private:
     char m_notice_server[256];
     LONG m_reinitialize_flag;
 
-    //Synchronizer m_sync;
+    // Synchronizer m_sync;
 
 public:
     static Processor& Instance();
@@ -41,8 +41,8 @@ public:
 
 private:
     Processor();
-    Processor(Processor const&) {}
-    void operator=(Processor const&) {}
+    Processor(const Processor&) {}
+    void operator=(const Processor&) {}
 };
 
 //+------------------------------------------------------------------+

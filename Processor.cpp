@@ -30,14 +30,11 @@ void Processor::Initialize() {
 
     Config::Instance().GetInteger("Disable Plugin", &m_disable_plugin, "0");
     Config::Instance().GetString("Server", m_notice_server, sizeof(m_notice_server), "http://localhost");
-    HttpPost::SetUrl(std::string(m_notice_server));
+    HttpPost::Instance().SetUrl(m_notice_server);
 }
 
 void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode) {
     FUNC_WARDER;
-
-    LOG_INFO(trade);
-    LOG_INFO(mode);
 
     //--- reinitialize if configuration changed
     if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
@@ -76,14 +73,11 @@ void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode)
             notice.put("error", "Unknown");
             break;
     }
-    HttpPost::AddNotice(notice);
+    HttpPost::Instance().AddNotice(notice);
 }
 
 void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSymbol* symbol, const int mode) {
     FUNC_WARDER;
-
-    LOG_INFO(trade);
-    LOG_INFO(mode);
 
     //--- reinitialize if configuration changed
     if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
@@ -98,7 +92,7 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
         return;
     }
 
-    //, OP_BUY_LIMIT, OP_SELL_LIMIT, OP_BUY_STOP, OP_SELL_STOP
+    // OP_BUY_LIMIT, OP_SELL_LIMIT, OP_BUY_STOP, OP_SELL_STOP
 
     boost::property_tree::ptree notice;
     notice.put("order", trade->order);
@@ -126,21 +120,10 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
             notice.put("error", "Unknown");
             break;
     }
-    HttpPost::AddNotice(notice);
+    HttpPost::Instance().AddNotice(notice);
 }
 
 void Processor::OrderClosedBy(TradeRecord* ftrade, TradeRecord* strade, TradeRecord* remaind, ConSymbol* sec, UserInfo* user) {
     FUNC_WARDER;
-
-    LOG_INFO(ftrade);
-    LOG_INFO(strade);
-
-    //--- reinitialize if configuration changed
-    if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
-        Initialize();
-    }
-
-    if (m_disable_plugin) {
-        return;
-    }
+    // Do nothing
 }

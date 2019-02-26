@@ -49,13 +49,13 @@ int APIENTRY MtSrvStartup(CServerInterface* server) {
     //--- initialize dealer helper
     Processor::Instance().Initialize();
 
-    HttpPost::StartPost();
+    HttpPost::Instance().StartPost();
 
     return (TRUE);
 }
 
 void APIENTRY MtSrvCleanup() {
-    HttpPost::StartPost();
+    HttpPost::Instance().stop();
     Processor::Instance().Shutdown();
 }
 

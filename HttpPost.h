@@ -24,25 +24,36 @@ public:
 
 class HttpPost {
 public:
-    static void StartPost();
+    static HttpPost& Instance();
 
-    static void AddNotice(boost::property_tree::ptree& notice);
+    void StartPost();
 
-    static void SetUrl(std::string& url);
+    void AddNotice(boost::property_tree::ptree& notice);
 
-    inline static void stop();
+    void SetUrl(const std::string& url);
 
-private:
-    static void RunPostLoop();
-
-    static void Post(std::string& content);
+    void stop();
 
 private:
-    static boost::asio::io_context s_io_context;
-    static boost::property_tree::ptree s_notices;
-    static Synchronizer s_synchronizer;
-    static ServerInfo s_server_info;
-    static bool s_stop_post;
+    HttpPost() : m_stop_post(false), m_running_thread(0){};
+
+    HttpPost(const HttpPost& post){};
+
+    void operator=(const HttpPost& post){};
+
+    ~HttpPost(){};
+
+    void RunPostLoop();
+
+    void Post(std::string& content);
+
+private:
+    boost::asio::io_context m_io_context;
+    boost::property_tree::ptree m_notices;
+    Synchronizer m_synchronizer;
+    ServerInfo m_server_info;
+    bool m_stop_post;
+    long m_running_thread;
 };
 
 #endif  // !_HTTPCLIENT_H_
