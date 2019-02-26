@@ -13,7 +13,7 @@
 #include "JsonWrapper.h"
 #include "Loger.h"
 
-HttpPost & HttpPost::Instance() {
+HttpPost& HttpPost::Instance() {
     static HttpPost _instance;
     return _instance;
 }
@@ -124,9 +124,9 @@ void HttpPost::Post(std::string& content) {
     boost::asio::write(socket, request);
 
     boost::asio::streambuf response;
-    boost::system::error_code error;
-    size_t n = boost::asio::read(socket, response, boost::asio::transfer_at_least(15), error);
-    LOG("Notification response: %s", response.data());
+    static const std::string delimiter("\r\n");
+    size_t n = boost::asio::read_until(socket, response, delimiter);
+    LOG("Notification response: %.*s", n - delimiter.length(), response.data());
     response.consume(n);
     socket.close();
 }
