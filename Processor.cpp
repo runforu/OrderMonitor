@@ -29,7 +29,7 @@ void Processor::Initialize() {
     FUNC_WARDER;
 
     Config::Instance().GetInteger("Disable Plugin", &m_disable_plugin, "0");
-    Config::Instance().GetString("Server", m_notice_server, sizeof(m_notice_server), "http://localhost");
+    Config::Instance().GetString("Server", m_notice_server, sizeof(m_notice_server) - 1, "http://localhost");
     HttpPost::Instance().SetUrl(m_notice_server);
 }
 
