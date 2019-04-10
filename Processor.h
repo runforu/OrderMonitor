@@ -4,17 +4,8 @@
 #include "Config.h"
 #include "common.h"
 
-struct SymbolSetting {
-    char m_symbol[12];
-    int m_max_interrupt_time;
-    SymbolSetting() : m_max_interrupt_time(-1) {}
-};
-
 class Processor {
 private:
-    //--- dealer user info
-    UserInfo m_manager;
-
     //--- configurations
     int m_disable_plugin;
     char m_notice_server[256];

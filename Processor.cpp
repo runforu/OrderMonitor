@@ -10,10 +10,6 @@ void Processor::Shutdown(void) {
 }
 
 Processor::Processor() : m_reinitialize_flag(0), m_disable_plugin(0) {
-    ZeroMemory(&m_manager, sizeof(m_manager));
-    m_manager.login = 14142;
-    COPY_STR(m_manager.name, "Order Monitor");
-    COPY_STR(m_manager.ip, "OrderMonitor");
 }
 
 Processor& Processor::Instance() {
