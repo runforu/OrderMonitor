@@ -71,7 +71,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_WIN32_WINNT=0x0501;_CRT_SECURE_NO_WARNINGS;_RELEASE_LOG_;WIN32;NDEBUG;_WINDOWS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_LICENSE_VERIFICATION_;_WIN32_WINNT=0x0501;_CRT_SECURE_NO_WARNINGS;_RELEASE_LOG_;WIN32;NDEBUG;_WINDOWS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -112,7 +112,7 @@
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <ImportLibrary>.\Release\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
@@ -135,7 +135,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_WIN32_WINNT=0x0501;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_LICENSE_VERIFICATION_;_WIN32_WINNT=0x0501;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -169,7 +169,7 @@
       <ImportLibrary>.\Debug\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>D:\Program Files %28x86%29\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.14.26428\lib\x86;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.17134.0\ucrt\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <Bscmake>
@@ -183,6 +183,8 @@
     <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="HttpPost.cpp" />
     <ClCompile Include="JsonWrapper.cpp" />
+    <ClCompile Include="LicenseClient.cpp" />
+    <ClCompile Include="LicenseService.cpp" />
     <ClCompile Include="Loger.cpp" />
     <ClCompile Include="OrderMonitor.cpp" />
     <ClCompile Include="ServerApi.cpp" />
@@ -194,6 +196,8 @@
     <ClInclude Include="FileUtil.h" />
     <ClInclude Include="HttpPost.h" />
     <ClInclude Include="JsonWrapper.h" />
+    <ClInclude Include="LicenseClient.h" />
+    <ClInclude Include="LicenseService.h" />
     <ClInclude Include="Loger.h" />
     <ClInclude Include="Processor.h" />
     <ClInclude Include="ServerApi.h" />

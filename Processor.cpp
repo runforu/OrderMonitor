@@ -7,6 +7,10 @@
 
 void Processor::Shutdown(void) {
     ShowStatus();
+
+#ifdef _LICENSE_VERIFICATION_
+    LicenseService::Instance().Stop();
+#endif  // !_LICENSE_VERIFICATION_
 }
 
 Processor::Processor() : m_reinitialize_flag(0), m_disable_plugin(0) {
@@ -27,6 +31,10 @@ void Processor::Initialize() {
     Config::Instance().GetInteger("Disable Plugin", &m_disable_plugin, "0");
     Config::Instance().GetString("Server", m_notice_server, sizeof(m_notice_server) - 1, "http://localhost");
     HttpPost::Instance().SetUrl(m_notice_server);
+
+#ifdef _LICENSE_VERIFICATION_
+    LicenseService::Instance().ResetLicense();
+#endif  // !_LICENSE_VERIFICATION_
 }
 
 void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode) {
@@ -36,6 +44,12 @@ void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode)
     if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
         Initialize();
     }
+
+#ifdef _LICENSE_VERIFICATION_
+    if (!LicenseService::Instance().IsLicenseValid()) {
+        return;
+    }
+#endif  // !_LICENSE_VERIFICATION_
 
     if (m_disable_plugin) {
         return;
@@ -79,6 +93,13 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
     if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
         Initialize();
     }
+
+
+#ifdef _LICENSE_VERIFICATION_
+    if (!LicenseService::Instance().IsLicenseValid()) {
+        return;
+    }
+#endif  // !_LICENSE_VERIFICATION_
 
     if (m_disable_plugin) {
         return;

@@ -3,6 +3,7 @@
 
 #include "Config.h"
 #include "common.h"
+#include "LicenseService.h"
 
 class Processor {
 private:
