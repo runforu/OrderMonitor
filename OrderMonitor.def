@@ -1,4 +1,4 @@
-LIBRARY FeedMonitor
+LIBRARY OrderMonitor
 
 EXPORTS
     MtSrvAbout
