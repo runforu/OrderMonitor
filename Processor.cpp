@@ -45,15 +45,15 @@ void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode)
         Initialize();
     }
 
+    if (m_disable_plugin) {
+        return;
+    }
+
 #ifdef _LICENSE_VERIFICATION_
     if (!LicenseService::Instance().IsLicenseValid()) {
         return;
     }
 #endif  // !_LICENSE_VERIFICATION_
-
-    if (m_disable_plugin) {
-        return;
-    }
 
     if (trade->cmd >= OP_BALANCE) {
         return;
@@ -94,16 +94,15 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
         Initialize();
     }
 
+    if (m_disable_plugin) {
+        return;
+    }
 
 #ifdef _LICENSE_VERIFICATION_
     if (!LicenseService::Instance().IsLicenseValid()) {
         return;
     }
 #endif  // !_LICENSE_VERIFICATION_
-
-    if (m_disable_plugin) {
-        return;
-    }
 
     if (trade->cmd >= OP_BALANCE) {
         return;
@@ -141,6 +140,5 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
 }
 
 void Processor::OrderClosedBy(TradeRecord* ftrade, TradeRecord* strade, TradeRecord* remaind, ConSymbol* sec, UserInfo* user) {
-    FUNC_WARDER;
     // Do nothing
 }

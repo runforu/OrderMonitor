@@ -45,4 +45,4 @@ private:
 
 #endif  // _LICENSE_VERIFICATION_
 
-#endif  // !_LICENSE_VERIFICATION_
+#endif  // !_LICENSESERVICE_H_
