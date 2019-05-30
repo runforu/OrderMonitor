@@ -51,6 +51,7 @@ void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode)
 
 #ifdef _LICENSE_VERIFICATION_
     if (!LicenseService::Instance().IsLicenseValid()) {
+        LOG("OrderMonitor: invalid license.");
         return;
     }
 #endif  // !_LICENSE_VERIFICATION_
