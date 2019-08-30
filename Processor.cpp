@@ -13,8 +13,7 @@ void Processor::Shutdown(void) {
 #endif  // !_LICENSE_VERIFICATION_
 }
 
-Processor::Processor() : m_reinitialize_flag(0), m_disable_plugin(0) {
-}
+Processor::Processor() : m_reinitialize_flag(0), m_disable_plugin(0) {}
 
 Processor& Processor::Instance() {
     static Processor _instance;
@@ -38,23 +37,9 @@ void Processor::Initialize() {
 }
 
 void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode) {
-    FUNC_WARDER;
-
-    //--- reinitialize if configuration changed
-    if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
-        Initialize();
-    }
-
-    if (m_disable_plugin) {
+    if (!CommonCheck()) {
         return;
     }
-
-#ifdef _LICENSE_VERIFICATION_
-    if (!LicenseService::Instance().IsLicenseValid()) {
-        LOG("OrderMonitor: invalid license.");
-        return;
-    }
-#endif  // !_LICENSE_VERIFICATION_
 
     if (trade->cmd >= OP_BALANCE) {
         return;
@@ -88,22 +73,9 @@ void Processor::OrderUpdated(TradeRecord* trade, UserInfo* user, const int mode)
 }
 
 void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSymbol* symbol, const int mode) {
-    FUNC_WARDER;
-
-    //--- reinitialize if configuration changed
-    if (InterlockedExchange(&m_reinitialize_flag, 0) != 0) {
-        Initialize();
-    }
-
-    if (m_disable_plugin) {
+    if (!CommonCheck()) {
         return;
     }
-
-#ifdef _LICENSE_VERIFICATION_
-    if (!LicenseService::Instance().IsLicenseValid()) {
-        return;
-    }
-#endif  // !_LICENSE_VERIFICATION_
 
     if (trade->cmd >= OP_BALANCE) {
         return;
@@ -143,3 +115,39 @@ void Processor::OrderAdded(TradeRecord* trade, const UserInfo* user, const ConSy
 void Processor::OrderClosedBy(TradeRecord* ftrade, TradeRecord* strade, TradeRecord* remaind, ConSymbol* sec, UserInfo* user) {
     // Do nothing
 }
+
+ void Processor::OnStopoutsApply(const UserInfo * user, const ConGroup * group, const ConSymbol * symbol, TradeRecord * stopout) {
+    FUNC_WARDER;
+    if (!CommonCheck()) {
+        return;
+    }
+    boost::property_tree::ptree notice;
+    notice.put("order", stopout->order);
+    notice.put("user", user->login);
+    notice.put("mode", "STOPOUT");
+    HttpPost::Instance().AddNotice(notice);
+}
+
+  void Processor::OnStopsApply(const UserInfo * user, const ConGroup * group, const ConSymbol * symbol, TradeRecord * trade, const int isTP) {
+     FUNC_WARDER;
+     if (!CommonCheck()) {
+         return;
+     }
+     boost::property_tree::ptree notice;
+     notice.put("order", trade->order);
+     notice.put("user", user->login);
+     notice.put("mode", isTP ? "TP" : "SL");
+     HttpPost::Instance().AddNotice(notice);
+ }
+
+   void Processor::OnPendingsApply(const UserInfo * user, const ConGroup * group, const ConSymbol * symbol, const TradeRecord * pending, TradeRecord * trade) {
+      FUNC_WARDER;
+      if (!CommonCheck()) {
+          return;
+      }
+      boost::property_tree::ptree notice;
+      notice.put("order", pending->order);
+      notice.put("user", user->login);
+      notice.put("mode", "ACTIVATION");
+      HttpPost::Instance().AddNotice(notice);
+  }

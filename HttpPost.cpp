@@ -104,29 +104,49 @@ void HttpPost::RunPostLoop() {
 }
 
 void HttpPost::Post(std::string& content) {
-    boost::asio::ip::tcp::resolver resolver(m_io_context);
-    boost::asio::ip::tcp::resolver::query query(m_server_info.m_host, m_server_info.m_port);
-    boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(query);
+    try {
+        boost::system::error_code ec;
+        boost::asio::ip::tcp::resolver resolver(m_io_context);
+        boost::asio::ip::tcp::resolver::query query(m_server_info.m_host, m_server_info.m_port);
+        boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(query, ec);
+        if (ec) {
+            return;
+        }
 
-    // Try each endpoint until we successfully establish a connection.
-    boost::asio::ip::tcp::socket socket(m_io_context);
-    boost::asio::connect(socket, endpoints);
+        // Try each endpoint until we successfully establish a connection.
+        boost::asio::ip::tcp::socket socket(m_io_context);
+        boost::asio::connect(socket, endpoints, ec);
+        if (ec) {
+            return;
+        }
 
-    boost::asio::streambuf request;
-    std::ostream request_stream(&request);
-    request_stream << "POST " << m_server_info.m_path << " HTTP/1.1\r\n";
-    request_stream << "Host: " << m_server_info.m_host << "\r\n";
-    request_stream << "Accept: */*\r\n";
-    request_stream << "Connection: close\r\n";
-    request_stream << "Content-Length: " << content.length() << "\r\n";
-    request_stream << "Content-Type: application/json\r\n\r\n";
-    request_stream << content;
-    boost::asio::write(socket, request);
+        boost::asio::streambuf request;
+        std::ostream request_stream(&request);
+        request_stream << "POST " << m_server_info.m_path << " HTTP/1.1\r\n";
+        request_stream << "Host: " << m_server_info.m_host << "\r\n";
+        request_stream << "Accept: */*\r\n";
+        request_stream << "Connection: close\r\n";
+        request_stream << "Content-Length: " << content.length() << "\r\n";
+        request_stream << "Content-Type: application/json\r\n\r\n";
+        request_stream << content;
+        boost::asio::write(socket, request, ec);
+        if (ec) {
+            socket.close();
+            return;
+        }
 
-    boost::asio::streambuf response;
-    static const std::string delimiter("\r\n");
-    size_t n = boost::asio::read_until(socket, response, delimiter);
-    LOG("Notification response: %.*s", n - delimiter.length(), response.data());
-    response.consume(n);
-    socket.close();
+        boost::asio::streambuf response;
+        static const std::string delimiter("\r\n");
+        size_t n = boost::asio::read_until(socket, response, delimiter, ec);
+        if (ec) {
+            socket.close();
+            return;
+        }
+
+        LOG("Notification response: %.*s", n - delimiter.length(), response.data());
+        response.consume(n);
+        socket.close();
+    } catch (...) {
+        LOG_LINE;
+    }
 }

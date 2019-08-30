@@ -12,4 +12,12 @@ EXPORTS
     MtSrvTradesUpdate
     MtSrvTradesAddExt
 
+;    MtSrvTradeStopoutsFilter
+;    MtSrvTradeStopoutsApply
+
+;    MtSrvTradeStopsFilter
+;    MtSrvTradeStopsApply
+
+;    MtSrvTradePendingsFilter
+;    MtSrvTradePendingsApply
 
