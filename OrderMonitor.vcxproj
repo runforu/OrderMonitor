@@ -279,6 +279,7 @@
     <ClCompile Include="LicenseService.cpp" />
     <ClCompile Include="Loger.cpp" />
     <ClCompile Include="OrderMonitor.cpp" />
+    <ClCompile Include="PluginVersion.cpp" />
     <ClCompile Include="ServerApi.cpp" />
     <ClCompile Include="Processor.cpp" />
   </ItemGroup>
